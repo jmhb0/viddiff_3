@@ -7,12 +7,12 @@ The Video Action Differencing task compares two videos of the same action. The g
 ![morecontent](https://raw.githubusercontent.com/jmhb0/jmhb0.github.io/main/images/pull%20fig-5.jpg)
 
 In closed evaluation: 
-- Input: two videos of the same action ($v_a, v_b$), action description string $s$, a list of candidate difference strings $\{d_0, d_1, ...\}$.
-- Output: for each difference string $d_i$, predict $p_i$, which is either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
+- Input: two videos of the same action ($v_a, v_b$), action description string $s$, a list of candidate difference strings $\lbrace d_0, d_1, ...\rbrace$.
+- Output: for each difference string $d_i$, predict $p_i\in\lbrace a,b\rbrace$, which is either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
 
 In open evaluation, the model must generate the difference strings:
 - Input: two videos of the same action ($v_a, v_b$), action description string $s$, an integer $n_{\text{diff}}$.
-- Output: a list of difference strings, $\{d_0, d_1, ...\}$ (at most $n_{\text{diff}}$ differences). For each difference string $d_i$, predict $p_i$, which is either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
+- Output: a list of difference strings, $\lbrace d_0, d_1, ...\rbrace$, with at most $n_{\text{diff}}$ differences. For each difference string $d_i$, predict $p_i\in\lbrace a,b\rbrace$, which is either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
 
 
 
@@ -74,12 +74,13 @@ For a `dataset` and `predictions` as above, run:
 import eval_viddiff
 
 eval_mode = "closed" # or "open"
-metrics = eval_viddiff.eval_viddiff(dataset,
+results_dir="results/name_of_experiment" # Path or None
+metrics = eval_viddiff.eval_viddiff(
+	dataset,
 	predictions,
 	eval_mode=eval_mode,
-	n_differences=None,
-	seed=0,
-results_dir="results/name_of_experiment")
+	results_dir=results_dir,
+	seed=0)
 print(metrics)
 ```
 
