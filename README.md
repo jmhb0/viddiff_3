@@ -1,7 +1,5 @@
-# VidDiff eval
-This is evaluation code for [the VidDiff benchmark](https://huggingface.co/datasets/jmhb0/VidDiffBench), from the ICLR 2025 paper [Video Action Differencing](https://openreview.net/forum?id=3bcN6xlO6f). 
-
-The below text introduces the task, and has evaluation code. The paper also proposed Viddiff method, which is in `viddiff_method` - read about at [this README](viddiff_method/README.md). 
+# Video action differencing benchmark (VidDiffBench) 
+This is evaluation code for [the VidDiff benchmark](https://huggingface.co/datasets/jmhb0/VidDiffBench), from the ICLR 2025 paper [Video Action Differencing](https://openreview.net/forum?id=3bcN6xlO6f). The below text introduces the task, and has evaluation code. The paper also proposed Viddiff method, which is in `viddiff_method` - read about at [this README](viddiff_method/README.md). 
 
 # The Video Action Differencing task: closed and open evaluation
 The Video Action Differencing task compares two videos of the same action. The goal is to identify differences in how the action is performed, where the differences are expressed in natural language.
@@ -21,9 +19,10 @@ In open evaluation, the model must generate the difference strings:
 ## Get the dataset
 Get `dataset` and `videos` from the Huggingface hub: [https://huggingface.co/datasets/jmhb0/VidDiffBench](https://huggingface.co/datasets/jmhb0/VidDiffBench)
 
-## Running eval
+## Evaluation
 TODO: pip install and so on 
-### prediction format:
+
+### Prediction format:
 Collect `predictions` as a list of dicts, like this 
 ```
 predictions = [
@@ -69,18 +68,18 @@ predictions = [
 	... // other samples
 ]
 ```
-### Running eval
+### Running evaluation
 For a `dataset` and `predictions` as above, run:
 ```
 import eval_viddiff
 
 eval_mode = "closed" # or "open"
 metrics = eval_viddiff.eval_viddiff(dataset,
-									predictions,
-									eval_mode=eval_mode,
-									n_differences=None,
-									seed=0,
-									results_dir="results/name_of_experiment")
+	predictions,
+	eval_mode=eval_mode,
+	n_differences=None,
+	seed=0,
+results_dir="results/name_of_experiment")
 print(metrics)
 ```
 
@@ -174,4 +173,5 @@ TODO for final:
 - Remove the scripts for transforming the dataset  “update_dataset.py”
 - run everything from scratch 
 - pip install and so on 
+- keepn the run `.sh` files. 
 
