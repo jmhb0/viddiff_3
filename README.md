@@ -93,6 +93,8 @@ In open evaluation, the model must generate the difference strings, so we need t
 
 
 ## Running LMM predictions 
+TODO: explain the args a little more
+
 We tested VidDiffBench on some popular LMMs: GPT-4o, Claude, Gemini,  QwenVL, and LLaVA-video:
 ```
 python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_closed_easy --split easy --eval closed --model gpt-4o-2024-08-06 --video_representation=frames
@@ -113,7 +115,7 @@ The inference fps is controlled in the config file `lmms/configs/config.yaml`. W
 The Viddiff method is in `viddiff_method`. To run it, look at [this README](viddiff_method/README.md). 
 
 ## Citation 
-Please cite the paper, and also the papers where we sourced the videos.
+Please cite the paper using, and also the papers where we sourced the videos (`\cite{burgessvideo, cai2022humman, parmar2022domain, grauman2024ego, gao2014jhu, }`).
 ```
 @inproceedings{burgessvideo,
   title={Video Action Differencing},
