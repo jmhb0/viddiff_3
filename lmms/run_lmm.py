@@ -36,7 +36,8 @@ def main(config, name, split, eval, model, video_representation):
 								 do_tqdm=True,
 								 cache=True,
 								 cache_dir="cache/cache_data")
-	n_differences = lvd.get_n_differences(dataset, args.lmm.n_differences)
+	# n_differences = lvd.get_n_differences(dataset, args.lmm.n_differences) 
+	n_differences = dataset['n_differences_open_prediction']
 
 	# make prompts and call the lmm
 	batch_prompts_text, batch_prompts_video = lu.make_text_prompts(
@@ -48,6 +49,7 @@ def main(config, name, split, eval, model, video_representation):
 		args.lmm,
 		args.eval_mode,
 		n_differences,
+		overwrite_cache=False,
 		# debug=debug,
 		verbose=True)
 
@@ -55,11 +57,12 @@ def main(config, name, split, eval, model, video_representation):
 	metrics = eval_viddiff.eval_viddiff(dataset=dataset,
 										predictions_unmatched=predictions,
 										eval_mode=args.eval_mode,
-										n_differences=n_differences,
+										n_differences=None,
 										seed=args.seed,
 										results_dir=args.logging.results_dir)
-	print(metrics)
 	ipdb.set_trace()
+	print(metrics)
+	# ipdb.set_trace()
 
 
 

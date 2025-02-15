@@ -282,12 +282,85 @@ def remove_fps_from_videos(dataset):
     
     return dataset.map(_process_row)
 
+def set_n_differences(dataset):
+    """
+    Creates a new column 'n_differences' that is 1.5x the number of non-None differences,
+    rounded up to the nearest integer.
+    """
+    def _process_row(row):
+        # Load the differences from the JSON string
+        gt_diffs = json.loads(row['differences_gt'])
+        
+        # Count non-None differences
+        n_actual_diffs = sum(1 for diff in gt_diffs.values() if diff is not None)
+        
+        # Calculate target number (1.5x rounded up)
+        row['n_differences_open_prediction'] = int(np.ceil(n_actual_diffs * 1.5))
+        return row
+    
+    return dataset.map(_process_row)
+
+def check_description_matches_query_string(dataset):
+    """
+    For each row, check if the descriptions in differences_annotated match their query_strings.
+    Prints a report showing matches/total for each sample.
+    """
+    for row in dataset:
+        diffs = json.loads(row['differences_annotated'])
+        
+        # Count matches and total non-None differences
+        matches = 0
+        total = 0
+        
+        for diff in diffs.values():
+            if diff is not None:
+                total += 1
+                if diff['description'] == diff['query_string']:
+                    matches += 1
+        
+        # Print results if there are any differences
+        if total > 0:
+            print(f"sample {row['sample_key']}: {matches}/{total} matches")
+            
+            # Optionally print mismatches for debugging
+            if matches < total:
+                print("Mismatches:")
+                for diff in diffs.values():
+                    if diff is not None and diff['description'] != diff['query_string']:
+                        print(f"  Description: {diff['description']}")
+                        print(f"  Query string: {diff['query_string']}\n")
+
+def find_only_c_samples(dataset):
+    """
+    Filter out rows where differences_gt only contains 'c' or null values,
+    with no 'a' or 'b' values.
+    Returns the filtered dataset.
+    """
+    def has_ab_labels(row):
+        gt_labels = json.loads(row['differences_gt'])
+        labels = set(label for label in gt_labels.values() if label is not None)
+        # Keep row if it has at least one 'a' or 'b' label
+        return not labels.issubset({'c'})
+    
+    filtered_dataset = dataset.filter(has_ab_labels)
+    
+    # Print info about removed samples
+    n_removed = len(dataset) - len(filtered_dataset)
+    print(f"Removed {n_removed} samples that only had 'c' or null labels")
+    
+    return filtered_dataset
+
 dataset = rename_splits(dataset)
 dataset = filter_ambiguous_diffs(dataset)
 dataset = rename_videoa_videob(dataset)
 dataset = balance_easy_split(dataset, n_rows=7)
 dataset = remove_fps_from_videos(dataset)
+dataset = set_n_differences(dataset)
 # count_difficulty_by_split(dataset)
+# check_description_matches_query_string(dataset)
+print("dataset before filtering", len(dataset))
+dataset = find_only_c_samples(dataset)
+print("dataset after filtering", len(dataset))
 
 ipdb.set_trace()
 pass

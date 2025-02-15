@@ -1,119 +1,170 @@
 # VidDiff eval
-This page explains running eval for the Viddiff benchmark, hosted on Huggingface [here](). It was proposed in "Video Action Differencing". 
+This is evaluation code for [the VidDiff benchmark](https://huggingface.co/datasets/jmhb0/VidDiffBench), from the ICLR 2025 paper [Video Action Differencing](https://openreview.net/forum?id=3bcN6xlO6f). 
+
+The below text introduces the task, and has evaluation code. The paper also proposed Viddiff method, which is in `viddiff_method` - read about at [this README](viddiff_method/README.md). 
+
+# The Video Action Differencing task: closed and open evaluation
+The Video Action Differencing task compares two videos of the same action. The goal is to identify differences in how the action is performed, where the differences are expressed in natural language.
+
+![morecontent](https://raw.githubusercontent.com/jmhb0/jmhb0.github.io/main/images/pull%20fig-5.jpg)
+
+In closed evaluation: 
+- Input: two videos of the same action, action description string, a list of candidate difference strings.
+- Output: for each difference string, either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
+
+In open evaluation, the model must generate the difference strings:
+- Input: two videos of the same action, action description string, a number 'n_differences'.
+- Output: a list of difference strings (at most 'n_differences'). For each difference string, 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
 
 
-The paper also proposed Viddiff method, which is in `viddiff_method`. To run it, look at [this README](viddiff_method/README.md). 
 
 ## Get the dataset
-TODO: 
-- Generally introduce the whole setup a bit better. This is not just 'eval' code, but also setting up the whole paper.
-- Link to HF. 
-- Reproduce the key things here, but link out to how to download the videos. 
-- That has instructions on how to load these extra files: they are already in this repo.
-- About the video caching, and how it's on by default. 
-- Different dataset splits. 
-- do explain the form of the 'videos' tuple. 
-
-## Running LMM predictions 
-Models available on API:
-```
-python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_easy --split easy --eval closed --model gpt-4o-2024-08-06
-```
-Default options are mode=closed, and model=gpt-4o. 
-
-For --model option: 
-- Openai API, e.g. we tested {gpt-4o-2024-08-06}, set OPENAI_API_KEY environment variable. 
-- Openrouter API, e.g. we tested {anthropic/claude-3-5-sonnet}, set OPENROUTER_API_KEY environment variable. 
-- Gemini API, e.g. we tested {gemini-1.5-flash}, set GEMINI_API_KEY environment variable. This one is really slow to run bc we didn't implement batching. 
-- QwenVL we did not use an API, so you need to run it locally. Click [here](apis/howto-local-models.md). 
-- LLaVA video we did not find via API, so you need to run it locally. Click [here](apis/howto-local-models.md). 
-
-The frame rate is set per source dataset and can be set in the config file. 
-
+Get `dataset` and `videos` from the Huggingface hub: [https://huggingface.co/datasets/jmhb0/VidDiffBench](https://huggingface.co/datasets/jmhb0/VidDiffBench)
 
 ## Running eval
-TODO: 
-- split into open and closed mode. 
-- describe how n_differences works: it's a json file that maps the action to the number of differences to use. In our protocol, you're allowed 1.5x the number of labeled differences (because there could be other valid differences not annotated). 
-
-In `eval_diff.py`, after loading the dataset and running predictions, run:
-
-TODO: loading n_differences
+TODO: pip install and so on 
+### prediction format:
+Collect `predictions` as a list of dicts, like this 
 ```
-metrics = eval_viddiff.eval_viddiff(
-	dataset,
-		predictions_unmatched=predictions,
-		eval_mode=0,
-		seed=0,
-	n_differences=10,
-		results_dir="results")
-```
-
-TODO: expand on this a little --> is it really decessary to have the 'description' field? I think in open mode it's yes, but otherwise no. 
-The structure for `predictions_unmatched`:
-```
-[
-	// list element i is a dict of difference predictions for sample i
+predictions = [
 	{
-		"numericKey1": {
-			// prediction details for one difference
-			"description": "..." // A description of the predicted difference",
-			"pred": "a|b" // Whather the description is more true of video a or b
-		},
-		"numericKey2": {
-			// Another difference prediction for the same smaple
-			// ... same structure as above ...
-		}
-		// There can be multiple difference predictions per sample
+		"difference_key": {
+			"description": "...",
+			"prediction": "a|b"
+		}, 
+		... // other predictions for this sample
 	},
+	... // other samples
+]
+```
+- Prediction at `predictions[i]` is for the sample at `dataset[i]`. Since we have multiple differences to predict, the dictionary has multiple entries.
+- The "difference_key" are the keys from `dataset[i]['differences_gt']`.
+- The "prediction" is 'a' or 'b'.
+- The "description" is the text description of the difference (only used in open evaluation).
+
+For example:
+```
+predictions = [
 	{
-		// Another set of observations
-		// ... same structure as above ...
-	}
-	... 
+		"0": {
+			"description": "the feet stance is wider",
+			"prediction": "b"
+		}, 
+		"1": {
+			"description": "the speed of hip rotation is faster",
+			"prediction": "a"
+		}, 
+	},
+	... // other samples
 ]
 ```
 
-For example, here are predictions for a 3-element dataset. 
+For closed evaluation, you can skip the description field, and write it without the lowest-level dict:
 ```
-[
-	// an example
+predictions = [
+	{
+		"0": "b",
+		"1": "a",
+	},
+	... // other samples
 ]
 ```
+### Running eval
+For a `dataset` and `predictions` as above, run:
+```
+import eval_viddiff
 
-## LLM eval 
-The eval file makes some api cals to openaiAPI. Need to set the OpenAI Api key 
+eval_mode = "closed" # or "open"
+metrics = eval_viddiff.eval_viddiff(dataset,
+									predictions,
+									eval_mode=eval_mode,
+									n_differences=None,
+									seed=0,
+									results_dir="results/name_of_experiment")
+print(metrics)
+```
 
 
-## LLM evaluation for matching, and possible errors
-TODO: explain how these can be handled 
 
-Mention the openai 'overwrite_cache'
+### Open evaluation 
+In open evaluation, the model must generate the difference strings, so we need to match the predicted "description" string to the ground truth description. This is handled in the `eval_viddiff.py` file, and uses an LLM evaluator. By default, it uses OpenAI API, and so you needs to set the `OPENAI_API_KEY` environment variable. 
 
 
-## Video-LMM baselines 
-Some baselines are implemented in `lmms`. 
-- Which models. 
-- Different video representations.
-- Same prompt except for description of how the videos are represented. 
-- They all do automatic caching. 
+
+
+## Running LMM predictions 
+We tested VidDiffBench on some popular LMMs: GPT-4o, Claude, Gemini,  QwenVL, and LLaVA-video:
+```
+python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_easy --split easy --eval closed --model gpt-4o-2024-08-06 --video_representation=frames
+```
+Default options are mode=closed, model=gpt-4o, split=easy, video_representation=frames. 
+
+For --model option: 
+- Openai API, e.g. we tested 'gpt-4o-2024-08-06'}, set OPENAI_API_KEY environment variable. 
+- Openrouter API, e.g. we tested 'anthropic/claude-3-5-sonnet'}, set OPENROUTER_API_KEY environment variable. 
+- Gemini API, e.g. we tested 'models/gemini-1.5-pro', set GEMINI_API_KEY environment variable. This one is really slow to run bc we didn't implement batching. 
+- QwenVL we did not use an API, so you need to run it locally. Click [here](apis/howto-local-models.md). Slow because no batching. 
+- LLaVA video we did not find via API, so you need to run it locally. Click [here](apis/howto-local-models.md). Slow because no batching. 
+
+The inference fps is controlled in the config file `lmms/configs/config.yaml`. We've implemented each model according to it's API. The prompts are in `lmms/lmm_prompts.py`, which are the same, except for a preamble that describes the video representation: e.g. GPT models are represented as frames, while Gemini is represented as video. We also implemented automatic caching of all LMM calls in `cache/`
+
 
 
 ## VidDiff method 
 The Viddiff method is in `viddiff_method`. To run it, look at [this README](viddiff_method/README.md). 
 
 ## Citation 
-TODO: copy what's in the HF repo. 
+Please cite the paper, and also the papers where we sourced the videos.
+```
+@inproceedings{burgessvideo,
+  title={Video Action Differencing},
+  author={Burgess, James and Wang, Xiaohan and Zhang, Yuhui and Rau, Anita and Lozano, Alejandro and Dunlap, Lisa and Darrell, Trevor and Yeung-Levy, Serena},
+  booktitle={The Thirteenth International Conference on Learning Representations}
+}
 
+@inproceedings{cai2022humman,
+  title={{HuMMan}: Multi-modal 4d human dataset for versatile sensing and modeling},
+  author={Cai, Zhongang and Ren, Daxuan and Zeng, Ailing and Lin, Zhengyu and Yu, Tao and Wang, Wenjia and Fan,
+          Xiangyu and Gao, Yang and Yu, Yifan and Pan, Liang and Hong, Fangzhou and Zhang, Mingyuan and
+          Loy, Chen Change and Yang, Lei and Liu, Ziwei},
+  booktitle={17th European Conference on Computer Vision, Tel Aviv, Israel, October 23--27, 2022,
+             Proceedings, Part VII},
+  pages={557--577},
+  year={2022},
+  organization={Springer}
+}
+          
+@inproceedings{parmar2022domain,
+  title={Domain Knowledge-Informed Self-supervised Representations for Workout Form Assessment},
+  author={Parmar, Paritosh and Gharat, Amol and Rhodin, Helge},
+  booktitle={Computer Vision--ECCV 2022: 17th European Conference, Tel Aviv, Israel, October 23--27, 2022, Proceedings, Part XXXVIII},
+  pages={105--123},
+  year={2022},
+  organization={Springer}
+}
 
-## TODO somewhere 
-- Discuss the `fps`. This is not a property of the data, but is a property of the standard implementation. There are functions for subsampling in the `data/` util files, but different methods may want to subset the videos differently.
-- pip install and so on 
+@inproceedings{grauman2024ego,
+  title={Ego-exo4d: Understanding skilled human activity from first-and third-person perspectives},
+  author={Grauman, Kristen and Westbury, Andrew and Torresani, Lorenzo and Kitani, Kris and Malik, Jitendra and Afouras, Triantafyllos and Ashutosh, Kumar and Baiyya, Vijay and Bansal, Siddhant and Boote, Bikram and others},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={19383--19400},
+  year={2024}
+}
+
+@inproceedings{gao2014jhu,
+  title={Jhu-isi gesture and skill assessment working set (jigsaws): A surgical activity dataset for human motion modeling},
+  author={Gao, Yixin and Vedula, S Swaroop and Reiley, Carol E and Ahmidi, Narges and Varadarajan, Balakrishnan and Lin, Henry C and Tao, Lingling and Zappella, Luca and B{\'e}jar, Benjam{\i}n and Yuh, David D and others},
+  booktitle={MICCAI workshop: M2cai},
+  volume={3},
+  number={2014},
+  pages={3},
+  year={2014}
+}
+```
 
 
 ## Notes for this repo that we can remove for the final version
 Notes
-- Updating the underlying dataset by loading "viddiff/VidDiffBench", making adjustments to fix some bad design choices & to address reviewer feedback, and then finally pushing the updated dataset to the hub ass "viddiff/VidDiffBench_2".
 
 TODO for final:
 - copy the final dataset to "jmhb0/ViddiffBench". Update the call in `data/load_viddiff_dataset.py` to load from "jmhb0/ViddiffBench".
@@ -122,5 +173,5 @@ TODO for final:
 - in download_data.py, change the "dataset_name" to "jmhb0/ViddiffBench".
 - Remove the scripts for transforming the dataset  “update_dataset.py”
 - run everything from scratch 
-- Do copy over the n_differences.json file and make sure that it's in the base dataset too. 
+- pip install and so on 
 

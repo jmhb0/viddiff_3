@@ -31,7 +31,7 @@ def load_config(f_config: str,
     if eval is not None:
         final_cfg.eval = eval
     if split is not None:
-        final_cfg.split = split
+        final_cfg.data.split = split
     if model is not None:
         final_cfg.lmm.model = model
     if subset_mode is not None:

@@ -30,7 +30,7 @@ lmm:
     fitness: 4      # original fps is 8
     ballsports: 5   # original fps is 30
     diving: 6       # original fps is 12
-    music: 2        # original fps is 30
+    music: 1        # original fps is 30
     surgery: 1      # original fps is 30
   fps_warning: True  # gives warning if fps_inference is not divisible by the original fps in that dataset 
   video_representation: frames

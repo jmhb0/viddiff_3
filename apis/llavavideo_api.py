@@ -139,7 +139,7 @@ def call_llavavideo_batch(batch_prompts_text,
 
 if __name__ == "__main__":
     from data import load_viddiff_dataset as lvd
-    dataset = lvd.load_viddiff_dataset(["fitness"])
+    dataset = lvd.load_viddiff_dataset(["easy"])
     videos = lvd.load_all_videos(dataset)
 
     # sample one video

@@ -1,5 +1,6 @@
 import ipdb
 import numpy as np
+from typing import Literal
 from pathlib import Path
 import json
 import pandas as pd
@@ -16,26 +17,28 @@ TEST_SEED = 0
 cache_match = lmdb.open("cache/cache_match", map_size=int(1e12))
 def eval_viddiff(dataset: Dataset,
                  predictions_unmatched: list[dict[str, dict]],
-                 eval_mode: int,
+                 eval_mode: Literal["closed", "open"],
                  seed: int,
-                 n_differences: list[int],
+                 n_differences: list[int] = None,
                  diffs_already_matched: bool = False,
                  results_dir=None):
+    """Parent eval function """
 
     # if results_dir given, log the raw preds ... add the sample key
     if results_dir:
         log_input_preds(dataset, predictions_unmatched, results_dir)
+    
+    if n_differences is None:
+        n_differences = dataset['n_differences_open_prediction']
 
-    # this deals with some edge case dw about it
-    if eval_mode == 2:
-        clean_evalmode2(dataset, predictions_unmatched)
-
+    if eval_mode == "closed":
+        format_predictions_closed(predictions_unmatched)
     # check the predictions are in the right form
     predictions_unmatched = validate_prediction_schema(predictions_unmatched,
                                                        n_differences,
                                                        eval_mode)
 
-    if eval_mode == 0 and not diffs_already_matched:
+    if eval_mode == "open" and not diffs_already_matched:
         # do LLM-based matching
         predictions, predictions_excess = do_matching(dataset,
                                                       predictions_unmatched,
@@ -48,14 +51,24 @@ def eval_viddiff(dataset: Dataset,
 
     # combine the predictions into a dataframe and compute some metrics
     df = make_eval_df(dataset, predictions)
-    metrics = compute_metrics(df)
+    metrics = compute_metrics(df, eval_mode)
 
     # logging
     log(dataset, df, metrics, predictions_excess, results_dir)
-    print(metrics)
 
     return metrics
 
+def format_predictions_closed(predictions_unmatched):
+    """ 
+    For closed eval, it's fine to do predictions like {"0": "a", "1": "b"}. 
+    But we want it in the same format as open eval, which is like:
+        {'0': {'description': '...', 'prediction': 'a'}, '2': {'description': '...', 'prediction': 'b'}
+    """
+    for i in range(len(predictions_unmatched)):
+        pred = predictions_unmatched[i]
+        if not isinstance(next(iter(pred.values())), dict):
+            predictions_unmatched[i] = {k: {"description": "", "prediction": v} for k, v in pred.items()}
+    return predictions_unmatched
 
 def log_input_preds(dataset, predictions_unmatched, results_dir):
     log_preds = {
@@ -66,7 +79,7 @@ def log_input_preds(dataset, predictions_unmatched, results_dir):
         json.dump(log_preds, fp, indent=4)
 
 
-def compute_metrics(df_notfiltered, results_dir=None):
+def compute_metrics(df_notfiltered, eval_mode, results_dir=None):
     """
     Compute the metrics, where we only consider samples with 'a' or 'b 
     """
@@ -89,10 +102,16 @@ def compute_metrics(df_notfiltered, results_dir=None):
             f"error counts a bit off: comparing (err_flippedpred + err_nomatch + err_is_c, 1 - recall) gives {err_flippedpred + err_nomatch + err_is_c}, {1 - recall}"
         )
 
-    metrics = dict(recall=float(recall),
-                   err_nomatch=float(err_nomatch),
-                   err_flippedpred=float(err_flippedpred),
-                   err_is_c=float(err_is_c))
+    if eval_mode == "closed":
+        metrics = dict(accuracy_closed=float(recall))
+
+    elif eval_mode == "open":
+        metrics = dict(recall=float(recall),
+                       err_nomatch=float(err_nomatch),
+                       err_flippedpred=float(err_flippedpred),
+                       err_is_c=float(err_is_c))
+    else:
+        raise ValueError(f"Invalid eval mode: {eval_mode}")
 
     return metrics
 
@@ -143,21 +162,13 @@ def validate_prediction_schema(predictions_unmatched: list[dict],
                     f"but prediction number {i} has {len(preds)}: \n{preds}.")
 
     # check that each prediction is one of 'a' or 'b'
-    for pred in predictions_unmatched:
+    for i, pred in enumerate(predictions_unmatched):
         for k, v in pred.items():
             assert k.isdigit()
             assert 'prediction' in v.keys()
             assert 'description' in v.keys()
             if not v['prediction'] in ('a', 'b', 'c'):
                 logging.warning(f"prediction not in (a,b,c) ", v)
-
-    return predictions_unmatched
-
-
-def clean_evalmode2(dataset, predictions_unmatched):
-    for i, (row, pred) in enumerate(zip(dataset, predictions_unmatched)):
-        keys = {k for k, v in row['differences_gt'].items() if v in ('a', 'b')}
-        predictions_unmatched[i] = {k: v for k, v in pred.items() if k in keys}
 
     return predictions_unmatched
 
@@ -487,7 +498,6 @@ def eval_mcq_ab(dataset, predictions, results_dir):
     # discard samples where 'gt' == 'c'
     df = df[df['gt'] != 'c']
     acc = (df['pred'] == df['gt']).sum() / len(df)
-    print(acc)
 
 
 prompt_open_eval_matching = """\

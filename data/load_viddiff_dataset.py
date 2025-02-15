@@ -139,7 +139,7 @@ def get_video_data(videos: dict, cache=True, cache_dir="cache/cache_data", overw
     for i in [0, 1]:
         path = videos[i]['path']
         assert Path(path).exists(
-        ), f"Video not downloaded [{path}]\ncheck dataset README about downloading videos"
+        ), f"Video not downloaded [{path}]\nCheck dataset README about downloading videos"
         frames_trim = slice(*videos[i]['frames_trim'])
 
         video_dict = videos[i].copy()
@@ -170,7 +170,7 @@ def get_video_data(videos: dict, cache=True, cache_dir="cache/cache_data", overw
         else:
             assert Path(path).suffix in (".mp4", ".mov")
             video, fps = _load_video(path, frames_trim=frames_trim)
-            assert fps == videos[i]['fps']
+            assert fps == videos[i]['fps_original']
 
         if cache:
             np.save(f"{memmap_filename}.info.npy", {
@@ -305,36 +305,6 @@ def apply_subset_mode(dataset, subset_mode):
 
 def get_hash_key(key: str) -> str:
     return hashlib.sha256(key.encode()).hexdigest()
-
-
-def get_n_differences(dataset, config_n_differences: int | str | Path):
-    """
-    The maximum number of differences the model is allowed to make. 
-    Either it's a single int, or its a path to a json `ndiff`, where n_differences
-    is indexed by the data split and sample action, e.g.: 
-        ndiff['fitness']['fitness_4'] = 8
-    For split 'fitness' and action 'fitness_4'
-
-    Returns: a list with length len(dataset), with an int for each sample. 
-    """
-    if type(config_n_differences) is int:
-        n_differences = [config_n_differences] * len(dataset)
-    else:
-        path = Path(config_n_differences)
-        if not path.exists():
-            raise ValueError(
-                f"Config value n_differences: [{config_n_differences}] must be an int " \
-                "or a path to a json with per-action level stuff n_differences ")
-        with open(path, 'r') as fp:
-            lookup_ndiff = json.load(fp)
-        n_differences = []
-        for row in dataset:
-            action = row['action']
-            if action not in lookup_ndiff.keys():
-                raise ValueError(f"n_differences json at {path} has no entry for {(action)}")
-            n_differences.append(lookup_ndiff[action])
-
-    return n_differences
 
 
 def dataset_metrics(dataset):

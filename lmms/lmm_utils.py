@@ -171,7 +171,7 @@ def make_prompt(action_description: str,
         from llava.conversation import conv_templates, SeparatorStyle
         from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
 
-        fps0, fps1 = video0['fps'], video1['fps']
+        fps0, fps1 = video0['fps_original'], video1['fps_original']
         nframes0, nframes1 = len(video0['video']), len(video1['video'])
         time0, time1 = nframes0 / fps0, nframes1 / fps1
         frame_time0_ = np.linspace(0, time0, nframes0)
@@ -210,6 +210,7 @@ def run_lmm(batch_prompts_text: list[str],
             eval_mode: int,
             n_differences: list[int],
             debug=None,
+            overwrite_cache: bool = False,
             verbose: bool = True):
     """ 
     Assumes that the `batch_prompts_video` was formatted in an appropriate way
@@ -233,6 +234,7 @@ def run_lmm(batch_prompts_text: list[str],
                                         seeds=seeds,
                                         model=args_lmm.model,
                                         debug=debug,
+                                        overwrite_cache=overwrite_cache,
                                         json_mode=json_mode)
         cost = sum([b[1] for b in res])
         logging.info(f"Cost for lmm differences generation: ${cost:.4f}")
