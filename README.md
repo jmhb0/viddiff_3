@@ -1,18 +1,18 @@
 # Video action differencing benchmark (VidDiffBench) 
 This is evaluation code for [the VidDiff benchmark](https://huggingface.co/datasets/jmhb0/VidDiffBench), from the ICLR 2025 paper [Video Action Differencing](https://openreview.net/forum?id=3bcN6xlO6f). The below text introduces the task, and has evaluation code. The paper also proposed Viddiff method, which is in `viddiff_method` - read about at [this README](viddiff_method/README.md). 
 
-# The Video Action Differencing task: closed and open evaluation
+# Task: Video Action Differencing
 The Video Action Differencing task compares two videos of the same action. The goal is to identify differences in how the action is performed, where the differences are expressed in natural language.
 
 ![morecontent](https://raw.githubusercontent.com/jmhb0/jmhb0.github.io/main/images/pull%20fig-5.jpg)
 
 In closed evaluation: 
-- Input: two videos of the same action, action description string, a list of candidate difference strings.
-- Output: for each difference string, either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
+- Input: two videos of the same action ($v_a, v_b$), action description string $s$, a list of candidate difference strings $\{d_0, d_1, ...\}$.
+- Output: for each difference string $d_i$, predict $p_i$, which is either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
 
 In open evaluation, the model must generate the difference strings:
-- Input: two videos of the same action, action description string, a number 'n_differences'.
-- Output: a list of difference strings (at most 'n_differences'). For each difference string, 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
+- Input: two videos of the same action ($v_a, v_b$), action description string $s$, an integer $n_{\text{diff}}$.
+- Output: a list of difference strings, $\{d_0, d_1, ...\}$ (at most $n_{\text{diff}}$ differences). For each difference string $d_i$, predict $p_i$, which is either 'a' if the statement applies more to video a, or 'b' if it applies more to video 'b'.
 
 
 
@@ -94,9 +94,9 @@ In open evaluation, the model must generate the difference strings, so we need t
 ## Running LMM predictions 
 We tested VidDiffBench on some popular LMMs: GPT-4o, Claude, Gemini,  QwenVL, and LLaVA-video:
 ```
-python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_easy --split easy --eval closed --model gpt-4o-2024-08-06 --video_representation=frames
+python lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_closed_easy --split easy --eval closed --model gpt-4o-2024-08-06 --video_representation=frames
 ```
-Default options are mode=closed, model=gpt-4o, split=easy, video_representation=frames. 
+The options above are the deafults. 
 
 For --model option: 
 - Openai API, e.g. we tested 'gpt-4o-2024-08-06'}, set OPENAI_API_KEY environment variable. 
@@ -105,8 +105,7 @@ For --model option:
 - QwenVL we did not use an API, so you need to run it locally. Click [here](apis/howto-local-models.md). Slow because no batching. 
 - LLaVA video we did not find via API, so you need to run it locally. Click [here](apis/howto-local-models.md). Slow because no batching. 
 
-The inference fps is controlled in the config file `lmms/configs/config.yaml`. We've implemented each model according to it's API. The prompts are in `lmms/lmm_prompts.py`, which are the same, except for a preamble that describes the video representation: e.g. GPT models are represented as frames, while Gemini is represented as video. We also implemented automatic caching of all LMM calls in `cache/`
-
+The inference fps is controlled in the config file `lmms/configs/config.yaml`. We've implemented each model according to it's API. The text prompts are in `lmms/lmm_prompts.py`, which are the same for all models, except for a preamble that describes the video representation: e.g. GPT models are represented as frames, while Gemini is represented as video. We also implemented automatic caching of all LMM calls in `cache/`
 
 
 ## VidDiff method 

@@ -8,7 +8,7 @@ def load_config(f_config: str,
                 f_cfg_base="lmms/configs/config.yaml",
                 name=None,
                 seed=None,
-                eval=None,
+                eval_mode=None,
                 split=None,
                 model=None,
                 video_representation=None,
@@ -28,8 +28,8 @@ def load_config(f_config: str,
     # modify based on the command line options
     if name is not None:
         final_cfg.logging.name = name
-    if eval is not None:
-        final_cfg.eval = eval
+    if eval_mode is not None:
+        final_cfg.eval_mode = eval_mode
     if split is not None:
         final_cfg.data.split = split
     if model is not None:

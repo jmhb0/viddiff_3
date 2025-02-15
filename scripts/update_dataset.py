@@ -15,6 +15,7 @@ from tqdm import tqdm
 import logging
 import hashlib
 from datasets import DatasetDict, Dataset
+import pandas as pd
 
 dataset = load_dataset("viddiff/VidDiffBench", cache_dir=None)
 dataset = dataset['test']
@@ -350,6 +351,78 @@ def find_only_c_samples(dataset):
     
     return filtered_dataset
 
+def collect_differences_by_action(dataset):
+    """
+    Collects all differences from the dataset organized by action.
+    Returns a dictionary where keys are actions and values are lists of difference dictionaries.
+    """
+    differences_by_action = {}
+    
+    for row in dataset:
+        action = row['action']
+        differences = json.loads(row['differences_annotated'])
+        
+        if action not in differences_by_action:
+            differences_by_action[action] = []
+            
+        # Add each non-None difference along with its key
+        for diff_key, diff_info in differences.items():
+            if diff_info is not None:
+                # Add the key to the difference info
+                diff_info['diff_key'] = diff_key
+                differences_by_action[action].append(diff_info)
+    
+    # Print summary
+    for action, diffs in differences_by_action.items():
+        print(f"\n{action}: {len(diffs)} differences")
+        for diff in diffs:
+            print(f"  - {diff['description']}")
+    
+    return differences_by_action
+
+def save_differences_to_csv(dataset):
+    """
+    Collects all differences from the dataset, converts to a DataFrame, and saves to CSV.
+    The CSV will be saved in the same directory as this script.
+    """
+    # First collect all differences
+    differences_by_action = {}
+    rows = []
+    
+    for row in dataset:
+        action = row['action']
+        differences = json.loads(row['differences_annotated'])
+        
+        # Add each non-None difference along with its key
+        for diff_key, diff_info in differences.items():
+            if diff_info is not None:
+                # Create a row for the DataFrame
+                df_row = {
+                    'action': action,
+                    'diff_key': diff_key,
+                    'description': diff_info['description'],
+                    'query_string': diff_info['query_string']
+                }
+                rows.append(df_row)
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(rows)
+    
+    # Sort by action and diff_key for better readability
+    df = df.sort_values(['action', 'diff_key'])
+    
+    # Save to the same directory as this script
+    script_dir = Path(__file__).parent
+    output_path = script_dir / 'differences_catalog.csv'
+    df.to_csv(output_path, index=False)
+    
+    print(f"Saved differences catalog to: {output_path}")
+    print(f"Total differences: {len(df)}")
+    print("\nSummary by action:")
+    print(df.groupby('action').size())
+    
+    return df
+
 dataset = rename_splits(dataset)
 dataset = filter_ambiguous_diffs(dataset)
 dataset = rename_videoa_videob(dataset)
@@ -372,3 +445,6 @@ if 0:
     dataset_dict.push_to_hub("viddiff/VidDiffBench_2", private=False)
 ipdb.set_trace()
 pass
+
+# Usage (add after your existing code):
+differences_df = save_differences_to_csv(dataset)

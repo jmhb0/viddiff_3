@@ -20,13 +20,13 @@ import eval_viddiff
 @click.option("--config", "-c", default="lmms/configs/base_lmm.yaml", help="config file")
 @click.option("--name", "-n", default=None, help="experiment name which fixes the filename. Default value uses the config file value")
 @click.option("--split", "-s", default="easy", type=click.Choice(["easy", "medium", "hard"]), help="split: one of [easy, medium, hard]")
-@click.option("--eval", "-e", default="closed", type=click.Choice(["closed", "open"]), help="eval: one of [closed, open]")
+@click.option("--eval_mode", "-e", default="closed", type=click.Choice(["closed", "open"]), help="eval: one of [closed, open]")
 @click.option("--model", "-m", default="gpt-4o-2024-08-06", help="model: the model name, like in their API, e.g. [gpt-4o-2024-08-06, anthropic/claude-3.5-sonnet-20241022]")
 @click.option("--video_representation", "-v", default="frames", type=click.Choice(["frames", "video", "llavavideo"]), help="video_representation: one of [frames, video]. Must be video for gemini.")
 # yapf: enable
-def main(config, name, split, eval, model, video_representation):
+def main(config, name, split, eval_mode, model, video_representation):
 	# config
-	args = config_utils.load_config(config, name=name, split=split, eval=eval, model=model, video_representation=video_representation)
+	args = config_utils.load_config(config, name=name, split=split, eval_mode=eval_mode, model=model, video_representation=video_representation)
 
 	# get dataset, videos, and allowable n_differences
 	dataset = lvd.load_viddiff_dataset([args.data.split],
@@ -60,9 +60,9 @@ def main(config, name, split, eval, model, video_representation):
 										n_differences=None,
 										seed=args.seed,
 										results_dir=args.logging.results_dir)
-	ipdb.set_trace()
 	print(metrics)
 	# ipdb.set_trace()
+	# pass
 
 
 

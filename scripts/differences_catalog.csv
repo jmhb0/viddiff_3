@@ -1,0 +1,153 @@
+action,diff_key,description,query_string
+ballsports_0,0,the shooter's knees are more bent before taking the shot,knees are more bent
+ballsports_0,1,the shooter's feet stance is wider when starting the shooting motion,wider feet stance
+ballsports_0,2,"the shooter's feet position are more staggered, meaning the feet are at a different distance from the basket",feet are more staggered
+ballsports_0,3,"the shooter's feet are oriented more square to the basket when starting the shooting motion, meaning the feet point more forward",feet are square to the basket
+ballsports_0,4,"as the shooter begins extending the elbow to shoot, the ball is more in front of the body, rather than behind the head",ball more in front of the body
+ballsports_0,5,"as the shooter begins extending the elbow to shoot, the non-shooting hand (the guide hand) is on the side of the ball and does not influence the balls trajectory",non-shooting hand on side of the ball
+ballsports_0,6,the shooter's jump is more vertical than forward,jump is more vertical than forward
+ballsports_0,7,the shooter's arm is more extended towards the basket,arms are more extended towards the basket
+ballsports_1,0,they jump with two feet on the 1st shot,two foot jump
+ballsports_1,1,they jump off the right foot for right-hand shot (the 2nd shot),jump off right foot
+ballsports_1,10,they catch the ball in a higher position on the 1st shot,catch the ball higher
+ballsports_1,11,"the body moves more forward during the 1st shot, rather than up or back",the body moves more forward during the shot
+ballsports_1,12,"the body moves more forward during the 2nd shot, rather than up or back",the body moves more forward during the shot
+ballsports_1,13,they have better balance when landing on the 1st shot,better balance when landing
+ballsports_1,14,they have better balance when landing on the 2nd shot,better balance when landing
+ballsports_1,15,they have more fluid motion in moving between the shots,more fluid motion
+ballsports_1,2,the non-jumping leg has a more elevated knee in the 1st shot,non-jumping leg more elevated
+ballsports_1,3,the non-jumping leg has a more elevated knee in the 2nd shot,non-jumping leg more elevated
+ballsports_1,4,the arm is more fully extended towards the basket in the follow through in the 1st shot,the arm is more fully extended towards the basket in the follow through\
+ballsports_1,5,the arm is more fully extended towards the basket in the follow through in the 2nd shot,the arm is more fully extended towards the basket in the follow through\
+ballsports_1,6,uses the non-shooting hand (the guide hand) for stabilizing the ball during the shot in the 1st shot,uses the non-shooting hand (the guide hand) for stabilizing the ball during the shot
+ballsports_1,7,uses the non-shooting hand (the guide hand) for stabilizing the ball during the shot in the 2nd shot,uses the non-shooting hand (the guide hand) for stabilizing the ball during the shot
+ballsports_1,8,they jump higher on the first shot,jumps higher
+ballsports_1,9,they jump higher on the second shot,jumps higher
+ballsports_2,0,the gaze is more up and forward instead of down on the 2nd last step,the gaze is more up and forward instead of down
+ballsports_2,1,"before raising the ball to shoot, the ball is more to the right side of the hip",the ball is more to the right side of the hip
+ballsports_2,10,they land on two feet,they land on two feet
+ballsports_2,2,they gather the ball with both hands,they gather the ball with both hands
+ballsports_2,3,they get deeper knee bend before jumping,deepr knee bend
+ballsports_2,4,they use the non-shooting hand (the guide hand) for stabilizing the ball during the shot,they use the non-shooting hand (the guide hand)
+ballsports_2,5,"during the shooting motion, the eye gaze is towards the rim",the eye gaze is towards the rim
+ballsports_2,6,they release the ball at a higher position,the arm is extended out in a higher position
+ballsports_2,7,they follow through more and towards the basket,more follow through to the basket
+ballsports_2,8,the non-jumping leg has a more elevated knee,the non-jumping leg has a more elevated knee
+ballsports_2,9,the ball is closer to the corner of the square on the backboard,the ball is closer to the corner of the square on the backboard
+ballsports_3,0,"the body (or torso) is more facing the net, or more 'square' to the net","the body (or torso) is more facing the net, or more 'square' to the net"
+ballsports_3,1,the non-kicking foot is planted more next to the ball and less behind the ball,"the non-kicking foot is planted more forward, next to the ball and not behind the ball"
+ballsports_3,2,the non-kicking foot is planted closer to the ball,the non-kicking foot is planted closer to the ball
+ballsports_3,3,the head is facing the ball leading up to the strike,the head is facing the ball leading up to the strike
+ballsports_3,4,they kick the ball harder,they kick the ball harder
+ballsports_3,5,they rotate their hips more during the strike,they rotate their hips more during the strike
+diving_0,0,Diver enters the water at an angle closer to 90 degrees in video A than in video B.,more perpendicular to water
+diving_0,1,The size and volume of the splash created upon entry is larger for video A than video B.,larger splash
+diving_0,2,Duration from jump off the board to water entry in longer in video A than in video B.,longer time in the air
+diving_0,3,Speed at which divers rotate during the dive in larger in video A than in video B.,faster rotation
+diving_0,4,Diver faces the water at jump off.,water facing
+diving_0,5,Diver rotates forward relative to themselves.,forward rotation
+diving_0,6,Diver's body is more straight in video A than in video B.,straighter body
+fitness_0,0,the feet stance is wider,the feet stance is wider
+fitness_0,1,the toes are more pointed out,the toes are more pointed out
+fitness_0,2,the speed of hip rotation is faster,the speed of hip rotation is faster
+fitness_0,3,the range of motion in the hips is larger,the range of motion in the hips is larger
+fitness_0,4,the head remains more vertical during the rotation,the head remains more vertical during the rotation
+fitness_0,5,the hand position is higher on the body,the hand position is higher on the body
+fitness_0,6,The upper body rocks more in a forward-backward way,The upper body rocks more in a forward-backward way
+fitness_1,0,the arms reach higher on the first step,arms at a higher angle
+fitness_1,1,the arms reach higher on the second step,arms at a higher angle
+fitness_1,10,the torso moves out further closer to the foot during the second step out,the torso moves out further closer to the foot
+fitness_1,2,the arms are elevated in an uneven way on the first step,the arms are elevated in a more uneven way
+fitness_1,3,the arms are elevated in an uneven way on the second step,the arms are elevated in a more uneven way
+fitness_1,4,the first step out is wider,foot stance is wider
+fitness_1,5,the second step out is wider,foot stance is wider
+fitness_1,6,the toes are more pointed outwards on the first step out,the toes are more pointed outwards
+fitness_1,7,the toes are more pointed outwards on the second step out,the toes are more pointed outwards
+fitness_1,8,the motion is faster,the motion is faster
+fitness_1,9,the torso moves out further closer to the foot during the first step out,the torso moves out further closer to the foot
+fitness_2,0,the feet stance is wider,the feet stance is wider
+fitness_2,1,the toes are more pointed out,the toes are more pointed out
+fitness_2,2,the gaze is forward at the start of the motion,the gaze is forward at the start of the motion
+fitness_2,3,the gaze is forward at the bottom of the deadlift,the gaze is forward at the bottom of the deadlift
+fitness_2,4,the arms are in front of the body at the bottom of the deadlift,the arms are in front of the body at the bottom of the deadlift
+fitness_2,5,there is a pause at the bottom of the deadlift,there is a pause at the bottom of the deadlift
+fitness_2,6,the knees bend less at the bottom of the deadlift,the knees bend less at the bottom of the deadlift
+fitness_2,7,the body is more locked out at the top of the deadlift,the body is more locked out at the top of the deadlift
+fitness_2,8,the entire motion is faster,the entire motion is faster
+fitness_2,9,the hands are lower at the bottom of the deadlift,the hands are lower at the bottom of the deadlift
+fitness_3,0,the feet stance is wider,the feet stance is wider
+fitness_3,1,the toes are more pointed out,the toes are more pointed out
+fitness_3,2,the upper arms are parallel to the ground at the start of the motion,the upper arms are parallel to the ground at the start of the motion
+fitness_3,3,the upper arms more stable through the entire motion,the upper arms more stable through the entire motion
+fitness_3,4,the arms travel through the full range of motion,the arms travel through the full range of motion
+fitness_3,5,the speed of the arms is faster,the speed of the arms is faster
+fitness_4,0,the feet stance is wider,the feet stance is wider
+fitness_4,1,the toes are more pointed out,the toes are more pointed out
+fitness_4,2,"the squat is deeper, measured by angle of the thigh to the ground","the squat is deeper, measured by angle of the thigh to the ground"
+fitness_4,3,"the knees are higher at the knee raise, measured by the angle of the thigh","the knees are higher at the knee raise, measured by the angle of the thigh"
+fitness_4,4,the speed of the whole motion is faster,the speed of the whole motion is faster
+fitness_5,0,the feet stance is wider,the feet stance is wider
+fitness_5,1,"during the squat descent, the knees cave inwards, instead of tracking over the feet","during the squat descent, the knees cave inwards, instead of tracking over the feet"
+fitness_5,2,"the squat is deeper, measured by angle of the thigh to the ground","the squat is deeper, measured by angle of the thigh to the ground"
+fitness_5,3,the speed of the whole motion is faster,the speed of the whole motion is faster
+fitness_5,4,they raise the left knee instead of the right knee,they raise the left knee instead of the right knee
+fitness_6,0,the feet stance is wider,the feet stance is wider
+fitness_6,1,the toes are more pointed out,the toes are more pointed out
+fitness_6,2,the speed of hip rotation is faster,the speed of hip rotation is faster
+fitness_6,3,the range of motion in the hips is larger,the range of motion in the hips is larger
+fitness_6,4,the head remains more vertical during the rotation,the head remains more vertical during the rotation
+fitness_6,5,the hand position is higher on the body,the hand position is higher on the body
+fitness_6,6,The upper body rocks more in a forward-backward way,The upper body rocks more in a forward-backward way
+fitness_7,0,the arms reach higher on the first step,arms at a higher angle
+fitness_7,1,the arms reach higher on the second step,arms at a higher angle
+fitness_7,10,the torso moves out further closer to the foot during the second step out,the torso moves out further closer to the foot
+fitness_7,2,the arms are elevated in an uneven way on the first step,the arms are elevated in a more uneven way
+fitness_7,3,the arms are elevated in an uneven way on the second step,the arms are elevated in a more uneven way
+fitness_7,4,the first step out is wider,foot stance is wider
+fitness_7,5,the second step out is wider,foot stance is wider
+fitness_7,6,the toes are more pointed outwards on the first step out,the toes are more pointed outwards on the first step out
+fitness_7,7,the toes are more pointed outwards on the second step out,the toes are more pointed outwards on the second step out
+fitness_7,8,the motion is faster,the motion is faster
+fitness_7,9,the torso moves out further closer to the foot during the first step out,the torso moves out further closer to the foot during
+music_0,0,Rhythmic consistency is better maintained in Video A than in Video B.,more rhythmically consistent
+music_0,1,There are more wrong note corrections in Video A than in Video B.,more corrections
+music_0,2,"The wrist should be straight and not dipped or raised, facilitating fluid motion and avoiding strain. The wrist position is more appropriate in Video A than in Video B.",straighter wrist position with less dipping or raising
+music_0,3,The speed of playing is higher in Video A than in Video B.,higher speed of playing
+music_0,4,The smoothness of thumb crossing is more evident in Video A than in Video B.,smoother thumb crossing
+music_0,5,Forearm movement is more controlled and minimal in Video A than in Video B.,more controlled forearm movement
+music_0,6,The body is closer to the piano in Video A than in Video B.,body closer to the piano
+music_1,0,"Fingers should press strings at the center of the frets, avoiding the metal fret bars for clear sound production. Video A shows more accurate finger placement on the fretboard than Video B.",more accurate finger placement
+music_1,1,Smooth transitions between strings with minimal disruption to the rhythm or tempo. Transitions in Video A are smoother than in Video B.,smoother transitions between strings
+music_1,2,The player uses a plectrum.,plectrum usage
+music_1,3,The left fingers in Video A are more curved / less collapsed than in video B.,more finger curving
+music_1,4,Only one finger of the left hands rests on a string at a time.,only one finger rests on a string at a time
+music_1,5,The unused left finger tips in Video A stay closer to the board than in video B.,unused fingers stay closer to board
+music_1,6,Guiatrist uses finger vibrato.,more finger vibrato usage
+surgery_0,0,The movements in Video A are more efficient than in Video B.,movements are more efficient
+surgery_0,1,The movements in Videos A are faster than in Video B.,movements are faster
+surgery_0,2,The tension on the suturing material and the tissue is better controlled in Video A than in Video B.,the tension on the suturing material and the tissue is better controlled
+surgery_0,3,The surgeon in Video A stops more often to plan next steps than the surgeon in Video B.,more interruptions
+surgery_0,4,Both graspers are used efficiently.,the graspers are used more efficiently
+surgery_0,5,The movements in Video A are more precise than in Video B.,the movement is more precise
+surgery_0,6,More errors are corrected in Video A than in Video B.,more errors are corrected
+surgery_0,7,The suturing thread tangles.,the suturing thread tangles
+surgery_0,8,The tube in Video A moves more than in Video B.,more movement of the tube
+surgery_1,0,The grasper in Video A is more quickly positioned on the needle than in Video B.,the grasper is positioned more quickly
+surgery_1,1,The grasper grasps the needle approximately 2/3 from the needle tip. The needle is grasped more precisely in Video A than in Video B.,more accurate grasping of the needle
+surgery_1,10,The suturing speed is higher in Video A than in Video B,the suturing speed is higher
+surgery_1,2,The dot is more accurately hit in Video A than in Video B,the dot is targeted more accurately
+surgery_1,3,The needle is inserted in the fabric more perpendicular to the incision.,insertion is more perpendicular to incision
+surgery_1,4,The force is applied in a more radial way in Video A than in Video B.,the force on the needle is applied more radially
+surgery_1,5,"The left graser supports the right grasper, by pressing down on the tissue.",left grasper supports by pressing on tissue
+surgery_1,6,The movement is more fluid in Video A than in Video B.,more fluid movement
+surgery_1,7,"The instrument tips are never out of view (occluded by instruments, or out of frame)",instrument tips are never out of view
+surgery_1,8,The instrument applies more force to the tissue and needle in Video A than in Video B,the instrument applies more force on the tissue
+surgery_1,9,The tension on the suturing thread is lower in Video A than in Video B.,the tension of the thread is lower
+surgery_2,0,The needle is grasped closer to the tip in Video A than in video B.,grasping of needle closer to the tip
+surgery_2,1,The movement of the needle through the hoop is more radial in Video A than in Video B.,the force on the needle is applied more radially
+surgery_2,2,The passage of the needle between two hands is more fluid in Video A than in Video B.,more fluid needle passage
+surgery_2,3,"The instrument tips are never out of view (occluded by instruments, or out of frame)",instrument tips are never out of view
+surgery_2,4,The force on the target is lower in Video A than in Video B,less force is applied on the target
+surgery_2,5,The second grasper is used to stabalize the target.,the second grasper stabilizes the target
+surgery_2,6,The thread is more efficiently managed in Video A than in Video B.,more efficient thread management
+surgery_2,7,The number of movements to arrange the needle before threading is lower in Video A than in Video B.,lower number of movements needed to arrange the needle

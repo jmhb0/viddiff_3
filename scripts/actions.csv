@@ -1,0 +1,19 @@
+action,split,action_name,action_description,domain,source_dataset
+fitness_0,easy,Hip circle anticlockwise,"fitness exercise called standing hip circle with hands on hips, one rotation anticlockwise",fitness,humann
+fitness_3,easy,lucky cat,"fitness exercise called two arm standing lucky cat starting with arms up, one repetition",fitness,humann
+fitness_4,easy,Squat Knee Raise side view,"squat without weights, then knee raise on left side",fitness,humann
+fitness_6,easy,Hip circle clockwise,"fitness exercise called standing hip circle with hands on hips, one rotation clockwise",fitness,humann
+ballsports_0,medium,basketball_jump_shot,"a person is doing a basketball mid-range jump shot, starting with the ball in their hand, no defense, practice only",ballsports,EgoExo4D
+ballsports_1,medium,basketball_mikan_layup,"a person does the Basketball drill called the Mikan layup where they start under the basket, do a layup with the right hand and catch it, do a left hand layup and catch it, no defense, practice only",ballsports,EgoExo4D
+ballsports_2,medium,basketball_reverse_layup,"a person playing basketball does a reverse layup starting from the left side of the basket and lays it up with their right hand on the right hand side, no defense, practice only",ballsports,EgoExo4D
+ballsports_3,medium,soccer_penalty_kick,"a person does a soccer drill where they do a single penalty kick, practice only, no defense, no goalie",ballsports,EgoExo4D
+diving_0,medium,diving,competitive diving from 10m,diving,FineDiving
+fitness_1,medium,Opening and closing step left side first,fitness exercise called opening and closing step on left side and then opening and closing step on right side,fitness,humann
+fitness_2,medium,car deadlift,a single free weight deadlift without any weight,fitness,humann
+fitness_5,medium,Squat Knee Raise diagonal view,a squat then a knee raise on left side,fitness,humann
+fitness_7,medium,Opening and closing step right side first,fitness exercise called opening and closing step on right side and then opening and closing step on left side,fitness,humann
+music_0,hard,piano,a person is playing scales on the piano,music,EgoExo4D
+music_1,hard,guitar,a person is playing scales on the guitar,music,EgoExo4D
+surgery_0,hard,Knot_Tying,"The subject picks up one end of a suture tied to a flexible tube attached at its ends to the surface of the bench-top model, and ties a single loop knot.",surgery,JIGSAWS
+surgery_1,hard,Suturing,"The subject picks up needle, proceeds to the incision (designated as a vertical line on the bench-top model), and passes the needle through the fake tissue, entering at the dot marked on one side of the incision and exiting at the corresponding dot marked on the other side of the incision. After the first needle pass, the subject extracts the needle out of the tissue, passes it to the right hand and repeats the needle pass three more times.",surgery,JIGSAWS
+surgery_2,hard,Needle_Passing,The subject picks up the needle (in some cases not captured in the video) and passes it through four small metal hoops from right to left. The hoops are attached at a small height above the surface of the bench-top model.,surgery,JIGSAWS
