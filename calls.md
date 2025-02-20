@@ -33,3 +33,14 @@ python -m ipdb lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_op
 ```
 
 
+
+# VidDiff
+```
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_easy --split easy --eval_mode closed --subset_mode 0
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_medium --split medium --eval_mode closed --subset_mode 0
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_hard --split hard --eval_mode closed --subset_mode 0
+```
+
+
+
+

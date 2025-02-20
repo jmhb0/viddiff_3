@@ -13,13 +13,19 @@ import logging
 import hashlib
 
 
-def load_viddiff_dataset(splits=["easy"], subset_mode="0", cache_dir=None):
+def load_viddiff_dataset(splits=["easy"], subset_mode="0", cache_dir=None, test_new=False):
     """
     splits in ['easy', 'medium', 'hard']
     """
-    dataset = load_dataset("viddiff/VidDiffBench_2", cache_dir=cache_dir)
-    dataset = dataset['test']
-    valid_splits = set(dataset['split'])
+    if not test_new:    
+        dataset = load_dataset("viddiff/VidDiffBench_2", cache_dir=cache_dir)
+        dataset = dataset['test']
+        valid_splits = set(dataset['split'])
+    else: 
+        dataset = load_dataset("viddiff/VidDiffBench_2", cache_dir=cache_dir)
+        dataset = dataset['test']
+        dataset = dataset.map(lambda example: example.update({'split': example['domain']}) or example)
+        valid_splits = set(dataset['split'])
 
     def _filter_splits(example):
         return example["split"] in splits
@@ -159,6 +165,7 @@ def get_video_data(videos: dict, cache=True, cache_dir="cache/cache_data", overw
                                   mode='r',
                                   shape=video_info['shape'])
                 video_dict['video'] = video
+                video_dict['fps'] = video_dict['fps_original'] # since we don't downsample here
                 video_dicts.append(video_dict)
                 continue
 
@@ -186,6 +193,7 @@ def get_video_data(videos: dict, cache=True, cache_dir="cache/cache_data", overw
             video = memmap
 
         video_dict['video'] = video
+        video_dict['fps'] = video_dict['fps_original']
         video_dicts.append(video_dict)
 
     return video_dicts
@@ -276,6 +284,21 @@ def _subsample_video(video: np.ndarray,
 
     return video, fps_new, subsample_time_int
 
+def downsample_videos(dataset, videos, args_viddiff_method):
+    """To fix some hacky - oOnly called by viddiff_method.run_viddiff.py """
+    for i in range(len(dataset)):
+        row = dataset[i]
+        domain = row['domain']
+        fps_inference = args_viddiff_method.fps_inference[domain]
+        video0, video1 = videos[0][i], videos[1][i]
+        for video in (video0, video1):
+            video['video'], fps_new, subsample_time_int = _subsample_video(
+                video['video'], video['fps_original'], fps_inference,
+                args_viddiff_method.fps_warning)
+            video['fps'] = fps_new
+    
+    return videos 
+
 
 def apply_subset_mode(dataset, subset_mode):
     """ 
@@ -332,9 +355,6 @@ def dataset_metrics(dataset):
     print(df.groupby(['split'])['variation_cnts'].sum())
     print("total ", df['variation_cnts'].sum())
 
-    ipdb.set_trace()
-
-    pass
 
     print()
 

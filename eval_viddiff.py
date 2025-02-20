@@ -52,9 +52,12 @@ def eval_viddiff(dataset: Dataset,
     # combine the predictions into a dataframe and compute some metrics
     df = make_eval_df(dataset, predictions)
     metrics = compute_metrics(df, eval_mode)
+    print(metrics)
 
     # logging
     log(dataset, df, metrics, predictions_excess, results_dir)
+
+    ipdb.set_trace()
 
     return metrics
 

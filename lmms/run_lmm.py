@@ -23,10 +23,11 @@ import eval_viddiff
 @click.option("--eval_mode", "-e", default="closed", type=click.Choice(["closed", "open"]), help="eval: one of [closed, open]")
 @click.option("--model", "-m", default="gpt-4o-2024-08-06", help="model: the model name, like in their API, e.g. [gpt-4o-2024-08-06, anthropic/claude-3.5-sonnet-20241022]")
 @click.option("--video_representation", "-v", default="frames", type=click.Choice(["frames", "video", "llavavideo"]), help="video_representation: one of [frames, video]. Must be video for gemini.")
+@click.option("--subset_mode", "-s", default=None, help="'0' is all data samples. '2_per_action' is 2 samples per action etc.")
 # yapf: enable
-def main(config, name, split, eval_mode, model, video_representation):
+def main(config, name, split, eval_mode, model, video_representation, subset_mode):
 	# config
-	args = config_utils.load_config(config, name=name, split=split, eval_mode=eval_mode, model=model, video_representation=video_representation)
+	args = config_utils.load_config(config, name=name, split=split, eval_mode=eval_mode, model=model, video_representation=video_representation, subset_mode=subset_mode)
 
 	# get dataset, videos, and allowable n_differences
 	dataset = lvd.load_viddiff_dataset([args.data.split],
@@ -36,8 +37,7 @@ def main(config, name, split, eval_mode, model, video_representation):
 								 do_tqdm=True,
 								 cache=True,
 								 cache_dir="cache/cache_data")
-	# n_differences = lvd.get_n_differences(dataset, args.lmm.n_differences) 
-	n_differences = dataset['n_differences_open_prediction']
+	n_differences = dataset['n_differences_open_prediction'] # for open eval only
 
 	# make prompts and call the lmm
 	batch_prompts_text, batch_prompts_video = lu.make_text_prompts(

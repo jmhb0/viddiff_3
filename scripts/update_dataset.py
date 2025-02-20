@@ -380,49 +380,6 @@ def collect_differences_by_action(dataset):
     
     return differences_by_action
 
-def save_differences_to_csv(dataset):
-    """
-    Collects all differences from the dataset, converts to a DataFrame, and saves to CSV.
-    The CSV will be saved in the same directory as this script.
-    """
-    # First collect all differences
-    differences_by_action = {}
-    rows = []
-    
-    for row in dataset:
-        action = row['action']
-        differences = json.loads(row['differences_annotated'])
-        
-        # Add each non-None difference along with its key
-        for diff_key, diff_info in differences.items():
-            if diff_info is not None:
-                # Create a row for the DataFrame
-                df_row = {
-                    'action': action,
-                    'diff_key': diff_key,
-                    'description': diff_info['description'],
-                    'query_string': diff_info['query_string']
-                }
-                rows.append(df_row)
-    
-    # Convert to DataFrame
-    df = pd.DataFrame(rows)
-    
-    # Sort by action and diff_key for better readability
-    df = df.sort_values(['action', 'diff_key'])
-    
-    # Save to the same directory as this script
-    script_dir = Path(__file__).parent
-    output_path = script_dir / 'differences_catalog.csv'
-    df.to_csv(output_path, index=False)
-    
-    print(f"Saved differences catalog to: {output_path}")
-    print(f"Total differences: {len(df)}")
-    print("\nSummary by action:")
-    print(df.groupby('action').size())
-    
-    return df
-
 dataset = rename_splits(dataset)
 dataset = filter_ambiguous_diffs(dataset)
 dataset = rename_videoa_videob(dataset)
@@ -440,11 +397,8 @@ pass
 
 
 # Push to hub
-if 0:
+if 1:
     dataset_dict = DatasetDict({"test": dataset})
     dataset_dict.push_to_hub("viddiff/VidDiffBench_2", private=False)
 ipdb.set_trace()
 pass
-
-# Usage (add after your existing code):
-differences_df = save_differences_to_csv(dataset)

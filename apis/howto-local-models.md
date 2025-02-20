@@ -1,4 +1,8 @@
-# How to run LLaVA video locally 
+We ran the below code either on a100s or l40s.
+
+# Run Qwenvl
 
 
-Note: we used a100s. 
+# Run LLaVA-video 
+
+
