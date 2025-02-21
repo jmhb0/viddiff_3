@@ -53,10 +53,12 @@ class Proposer():
     def generate_proposals(self):
 
         # construct candidate differences. If eval_mode>0, read from gt
-        if self.args.eval_mode == 0:
+        if self.args.eval_mode == "open":
             self.query_1_differences()
-        else:
+        elif self.args.eval_mode == "closed":
             self.query_1_differences_gt()
+        else:
+            raise ValueError(f"Invalid eval_mode: {self.args.eval_mode}")
 
         # get text retrieval information for action stages
         self.query_2_subactions()  # actually has query 2 and query 3
@@ -64,13 +66,13 @@ class Proposer():
         # link the differences to stages
         self.query_4_linking()
 
-        if self.args.do_eval and self.args.eval_mode == 0:
+        if self.args.do_eval and self.args.eval_mode == 'open':
             self.match_differences()
 
         return self.proposals
 
     def query_1_differences_gt(self):
-        """ For eval_mode != 0, the gt differences are given """
+        """ For eval_mode 'closed', the gt differences are given """
         self.responses_1_differences = {}
         for row in self.dataset:
             # get the differences that have a prediction for 
@@ -102,8 +104,8 @@ class Proposer():
         # get and verify template
         template_differences = prompts.lookup_prompts_proposer_1_differences[
             self.args.prompt_key_1_differences]
-        if self.args.n_differences:
-            assert "{n_differences}" in template_differences
+        # if self.args.n_differences:
+        #     assert "{n_differences}" in template_differences
 
         # one query per sample
         batch_texts = []
@@ -176,7 +178,6 @@ class Proposer():
         llm_batch = openai_api.call_gpt_batch(
             batch_texts,
             seeds=batch_seeds,
-            # overwrite_cache=True,
             model=self.args.model)
         cost = sum([b[1] for b in llm_batch])
         responses = [b[0] for b in llm_batch]
@@ -252,7 +253,6 @@ class Proposer():
         llm_batch = openai_api.call_gpt_batch(
             batch_texts,
             model=self.args.model,
-            # overwrite_cache=True,
             seed=self.args.seed)
         cost = sum([b[1] for b in llm_batch])
         logging.info(f"Cost for linking generation: ${cost:.4f}")
@@ -424,4 +424,4 @@ class Proposer():
 
         acc_recalled = num_preds_after_matching / num_gt
         logging.info(
-            f"Recovered {acc_recalled:.4f} of the differences in the matching")
+            f"\nRecovered {acc_recalled:.4f} of the differences in the matching\n")

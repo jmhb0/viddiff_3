@@ -11,6 +11,13 @@ logging:
   overwrite_ok: True
   verbose: ${verbose}
 
+fps_inference: 
+    fitness: 8      # original fps is 8
+    ballsports: 5   # original fps is 30
+    diving: 6       # original fps is 12
+    music: 1        # original fps is 30
+    surgery: 1      # original fps is 30
+
 data:
   split: easy
   debug: ${debug}

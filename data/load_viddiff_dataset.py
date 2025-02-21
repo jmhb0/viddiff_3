@@ -284,17 +284,16 @@ def _subsample_video(video: np.ndarray,
 
     return video, fps_new, subsample_time_int
 
-def downsample_videos(dataset, videos, args_viddiff_method):
+def downsample_videos(dataset, videos, args_fps_inference, fps_warning=True):
     """To fix some hacky - oOnly called by viddiff_method.run_viddiff.py """
     for i in range(len(dataset)):
         row = dataset[i]
         domain = row['domain']
-        fps_inference = args_viddiff_method.fps_inference[domain]
+        fps_inference = args_fps_inference[domain]
         video0, video1 = videos[0][i], videos[1][i]
         for video in (video0, video1):
             video['video'], fps_new, subsample_time_int = _subsample_video(
-                video['video'], video['fps_original'], fps_inference,
-                args_viddiff_method.fps_warning)
+                video['video'], video['fps_original'], fps_inference, fps_warning)
             video['fps'] = fps_new
     
     return videos 

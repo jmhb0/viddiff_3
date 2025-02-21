@@ -34,12 +34,10 @@ class Differencer():
     The difference key, k1, is defined in the output of the proposer stage, which 
     is stored in proposals. Since the differences are the same for
     each action, it can be looked up in proposals[sample_key]. 
-    In eval_mode, these are the same differences in the benchmark dataset 
-    folder, file differences.csv. 
     """
 
     def __init__(self, args, args_logging, dataset, videos, proposals,
-                 retrieved_frames, eval_mode):
+                 retrieved_frames):
         self.args = args
         self.args_logging = args_logging
         self.dataset = dataset
@@ -47,7 +45,6 @@ class Differencer():
         self.videos1 = videos[1]
         self.proposals = proposals
         self.retrieved_frames = retrieved_frames
-        self.eval_mode = eval_mode
 
         # logging subdirectory
         self.results_subdir = Path(
@@ -125,12 +122,9 @@ class Differencer():
                 ## make the text prompts
                 # single frame prompt
                 if len(frames_0) == 1:
-                    if self.eval_mode != 1:
-                        prompt = prompt_templates.lookup_prompts_differencing_1_frame[
-                            self.args.prompt_key]
-                    else:
-                        prompt = prompt_templates.prompt_template_mcq_ab_singlefrmae
-
+                    prompt = prompt_templates.lookup_prompts_differencing_1_frame[
+                        self.args.prompt_key]
+                    
                     num_frames = 1
                     time_diff = None
                     prompt = prompt.replace(
@@ -139,11 +133,9 @@ class Differencer():
 
                 # multiframe prompt
                 else:
-                    if self.eval_mode != 1:
-                        prompt = prompt_templates.lookup_prompts_differencing_multiframe[
+                    prompt = prompt_templates.lookup_prompts_differencing_multiframe[
                             self.args.prompt_key_multiframe]
-                    else:
-                        prompt = prompt_templates.prompt_template_mcq_ab_multifrmae
+                    
                     num_frames = len(frames_0)
                     frame_sep = frame_idxs_video0[1] - frame_idxs_video0[0]
                     time_diff = frame_sep / fps0
@@ -215,11 +207,9 @@ class Differencer():
         logging.info(f"Calling GPT batch mode: {len(batch_texts)} queries")
 
         start = time.time()
-        # kwargs_gpt['overwrite_cache'] = True
-        json_mode = True if self.eval_mode != 1 else False
+        json_mode = True 
         vlm_results_batch = call_gpt_batch(texts=batch_texts,
                                            imgs=batch_frames,
-                                           overwrite_cache=False,
                                            json_mode=json_mode,
                                            **kwargs_gpt)
         duration = time.time() - start
@@ -309,21 +299,6 @@ class Differencer():
         """
         # this list is what we send to the evaluator
         self.predictions_for_eval = []
-
-        # for eval_mode 1, we have unstructured response: a or b
-        if self.eval_mode == 1:
-            pattern = r"answer is \(([ab])\)"
-            for sample_key, preds_vlm in self.samples_preds_vlm.items():
-                # just get the string e.g. "the answer is (a)"
-                pred = preds_vlm[0]['response'][0]
-                match = re.search(pattern, pred)
-                if match is not None:
-                    ans = match.group(1)
-                else:
-                    ans = "a"
-
-                self.predictions_for_eval.append(ans)
-            return
 
         # I forgot if these two objects are important as well ...
         self.sample_predictions = {}

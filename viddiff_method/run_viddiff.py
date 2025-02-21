@@ -28,7 +28,7 @@ logging.getLogger("_client").setLevel(logging.ERROR)
 @click.option("--name", "-n", default=None, help="experiment name which determines the filename. Default value uses the config file value")
 @click.option("--seed", "-s", default=None, help="Random seed. Default value uses the config file value")
 @click.option("--split", "-s", default=None, help="Data split. Default value uses the config file value")
-@click.option("--eval_mode", "-e", default="closed", type=click.Choice(['closed','opem']), help="Eval mode. Default value uses the config file value")
+@click.option("--eval_mode", "-e", default="closed", type=click.Choice(['closed','open']), help="Eval mode. Default value uses the config file value")
 @click.option("--test_new", "-t", is_flag=True, default=False, help="Test new actions. Default value uses the config file value")
 # @click.option("--test_flip", "-f", default=None, help="Flip the order of videos to test sensitivity to order. Default value uses the config file value")
 @click.option("--subset_mode", "-s", default=None, help="Data subset mode (see configs/base.yaml). Default value uses the config file value")
@@ -36,7 +36,7 @@ logging.getLogger("_client").setLevel(logging.ERROR)
 def main(config, name, seed, split, eval_mode, test_new, subset_mode):
 
     logging.info("Loading config")
-    args = config_utils.load_config(config, split=split, eval_mode=eval_mode, subset_mode=subset_mode)
+    args = config_utils.load_config(config, name=name, seed=seed, split=split, eval_mode=eval_mode, subset_mode=subset_mode)
 
     logging.info(f"Loading dataset {args.data.split}")
     dataset = lvd.load_viddiff_dataset([args.data.split],
@@ -44,7 +44,9 @@ def main(config, name, seed, split, eval_mode, test_new, subset_mode):
                                        test_new=test_new)
     print("\nLength of dataset: ", len(dataset), "\n")
 
-    videos = lvd.load_all_videos(dataset, do_tqdm=True)#, overwrite_cache=True)
+    videos = lvd.load_all_videos(dataset, do_tqdm=True, overwrite_cache=False)
+    videos = lvd.downsample_videos(dataset, videos, args.fps_inference)
+
     n_differences = dataset['n_differences_open_prediction']
 
     logging.info(f"Running LLM proposer")
@@ -58,7 +60,7 @@ def main(config, name, seed, split, eval_mode, test_new, subset_mode):
     logging.info(f"Running VLM frame differencing")
     frame_diferencer = Differencer(args.frame_differencer, args.logging,
                                         dataset, videos, proposals,
-                                        retrieved_frames, args.eval_mode)
+                                        retrieved_frames)
     predictions = frame_diferencer.caption_differences()
 
     logging.info(f"Doing eval")
@@ -70,8 +72,6 @@ def main(config, name, seed, split, eval_mode, test_new, subset_mode):
                                         diffs_already_matched=True,
                                         )
     print(results)
-    ipdb.set_trace()
-    pass
 
 if __name__ == "__main__":
     main()

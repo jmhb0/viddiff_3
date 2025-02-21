@@ -9,6 +9,7 @@ The other funcs are by JB
 
 import ipdb
 import numpy as np
+import logging
 import matplotlib.pyplot as plt
 
 class Grammar:
@@ -184,13 +185,14 @@ def run_viterbi(probs):
     nframes, nclasses = probs.shape
 
     assert probs.min() >= 0 and probs.max() <= 1
-    assert nclasses < nframes, "input should be nclasses, nframes"
+    if nclasses >= nframes:
+        logging.warning(f"nclasses ({nclasses}) >= nframes ({nframes}), returning range(nframes) as temporal segmentation")
+        return list(range(nframes)) 
 
     likelihood_grid = np.log(probs)
     pi = list(range(nclasses))
     grammar = Grammar(pi)
-    viterbi = Viterbi(grammar=grammar,
-                                      probs=(-1 * likelihood_grid))
+    viterbi = Viterbi(grammar=grammar, probs=(-1 * likelihood_grid))
     viterbi.inference()
     viterbi.backward(strict=True)
     pred_classes = np.ones(nframes, dtype=int) * -1

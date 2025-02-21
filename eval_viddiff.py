@@ -22,7 +22,6 @@ def eval_viddiff(dataset: Dataset,
                  n_differences: list[int] = None,
                  diffs_already_matched: bool = False,
                  results_dir=None):
-    """Parent eval function """
 
     # if results_dir given, log the raw preds ... add the sample key
     if results_dir:
@@ -33,6 +32,7 @@ def eval_viddiff(dataset: Dataset,
 
     if eval_mode == "closed":
         format_predictions_closed(predictions_unmatched)
+
     # check the predictions are in the right form
     predictions_unmatched = validate_prediction_schema(predictions_unmatched,
                                                        n_differences,
@@ -56,8 +56,6 @@ def eval_viddiff(dataset: Dataset,
 
     # logging
     log(dataset, df, metrics, predictions_excess, results_dir)
-
-    ipdb.set_trace()
 
     return metrics
 
@@ -86,13 +84,14 @@ def compute_metrics(df_notfiltered, eval_mode, results_dir=None):
     """
     Compute the metrics, where we only consider samples with 'a' or 'b 
     """
-    # in standard mode, only want rows where the gt difference is 'a' or 'b'
+    # only want rows where the gt difference is 'a' or 'b'
     df = df_notfiltered[df_notfiltered['gt'].isin(['a', 'b'])].copy()
     recall = (df['pred'] == df['gt']).sum() / len(df)
 
     # error types - no match, or wrong prediction
     df['err_nomatch'] = df['pred'].isna()
     err_nomatch = df['err_nomatch'].mean()
+    matched_items = 1 - err_nomatch
     df['err_flippedpred'] = (df['pred'] != df['gt']) & (df['pred'].isin(
         ['a', 'b']))
     err_flippedpred = df['err_flippedpred'].mean()
@@ -112,7 +111,7 @@ def compute_metrics(df_notfiltered, eval_mode, results_dir=None):
         metrics = dict(recall=float(recall),
                        err_nomatch=float(err_nomatch),
                        err_flippedpred=float(err_flippedpred),
-                       err_is_c=float(err_is_c))
+                       matched_items=float(matched_items))
     else:
         raise ValueError(f"Invalid eval mode: {eval_mode}")
 
@@ -185,7 +184,7 @@ def do_matching(dataset, predictions_unmatched, seed):
     differences_gt_all = []
 
     for row, pred_unmatched in zip(dataset, predictions_unmatched):
-        # (this filters keys that aren't actually for a real difference.
+        # (this filters keys that are not real differences)
         differences_gt = {
             k: v
             for k, v in row['differences_gt'].items() if v is not None
@@ -235,7 +234,6 @@ def do_matching(dataset, predictions_unmatched, seed):
         response_format=MatchingResponser,
         json_mode=False,
         cache_dir=cache_match,
-        # overwrite_cache=False,
         seeds=seeds)
     cost = sum([b[1] for b in res])
     logging.info(f"Cost for eval difference description matching: ${cost:.4f}")
@@ -310,7 +308,6 @@ def add_gt_and_details(dataset, predictions):
         assert set(keys_gt) == set(pred.keys())
 
         # add the extra info that would have been added by the matching
-        # ipdb.set_trace()
         for k in pred.keys():
             pred[k]['pred'] = pred[k]['prediction']
             del pred[k]['prediction']
@@ -359,7 +356,6 @@ def test_reverse_statements(predictions, seed, batch_size):
     res = openai_api.call_gpt_batch(
         batch_prompts_text,
         seeds=seeds,
-        # overwrite_cache=True,
         cache_dir=cache_match,
         model="gpt-4o-mini")
     cost = sum([r[1] for r in res])
@@ -436,7 +432,7 @@ def _verify_matching_properties(match, differences_gt, pred_unmatched,
     if set(match.keys()) != set(differences_gt.keys()):
         raise ValueError(
             f"LLM error. Attempted matching [{match}] doesn't have the right difference " \
-            "keys [{differences_gt}]. "\
+            f"keys [{differences_gt}]. "\
             "Change the seed passed in to eval_viddiff() function and retry matching")
 
     # each 'predicted difference' that is matched appears no more than once

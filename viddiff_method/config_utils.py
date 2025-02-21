@@ -5,7 +5,6 @@ import os
 import json
 
 def load_config(f_config: str,
-                # f_cfg_base="viddiff_method/configs/base_viddiff.yaml",
                 f_cfg_base="viddiff_method/configs/config.yaml",
                 name=None,
                 seed=None,
@@ -27,21 +26,29 @@ def load_config(f_config: str,
     # modify based on the command line options
     if name is not None:
         final_cfg.logging.name = name
+    if seed is not None:
+        final_cfg.seed = seed
     if split is not None:
         final_cfg.data.split = split
     if eval_mode is not None:
-        final_cfg.eval = eval_mode
+        final_cfg.eval_mode = eval_mode
+        final_cfg.proposer.eval_mode = eval_mode
+        final_cfg.retriever.eval_mode = eval_mode
+        final_cfg.frame_differencer.eval_mode = eval_mode
     if subset_mode is not None:
         final_cfg.data.subset_mode = subset_mode
-    else:
-        assert Path(f_config).stem == final_cfg.logging.name, f"config name [{f_config}]"\
-            f" different to config logging.name [{final_cfg.logging.name}]. "\
-            "If that's fine then comment out this line."
 
     # create args object, resolving variable references
     args = OmegaConf.to_container(final_cfg, resolve=True)
     args = OmegaConf.create(args)
     args.config = f_config
+
+    if not final_cfg.logging.overwrite_ok and os.path.exists(
+            final_cfg.logging.results_dir):
+        raise ValueError(
+            f"results_dir [{args.logging.results_dir}] already exists and "\
+            "config.logging.overwrite_ok is False."
+        )
 
     # create results dir. If it exists, throw error if logging.overwrite_okay=False
     if not args.logging.overwrite_ok and os.path.exists(

@@ -27,18 +27,32 @@ python -m ipdb lmms/run_lmm.py --config lmms/configs/config.yaml --name qwen_har
 python -m ipdb lmms/run_lmm.py --config lmms/configs/config.yaml --name qwen_hard --split hard --eval_mode closed --model lmms-lab/LLaVA-Video-7B-Qwen2 --video_representation llavavideo
 ```
 
-# open evaluation 
+## open evaluation 
 ```
 python -m ipdb lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_open_easy --split easy --eval_mode open --model gpt-4o-2024-08-06
 ```
 
+```
+python -m ipdb lmms/run_lmm.py --config lmms/configs/config.yaml --name gpt4o_open_medium --split medium --eval_mode open --model gpt-4o-2024-08-06
+```
+
+
+
 
 
 # VidDiff
+viddiff closed eval
 ```
-python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_easy --split easy --eval_mode closed --subset_mode 0
-python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_medium --split medium --eval_mode closed --subset_mode 0
-python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_hard --split hard --eval_mode closed --subset_mode 0
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_closed_easy --split easy --eval_mode closed --subset_mode 0
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_closed_medium --split medium --eval_mode closed --subset_mode 0
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_closed_hard --split hard --eval_mode closed --subset_mode 0
+```
+
+viddiff open eval
+```
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_open_easy --split easy --eval_mode open --subset_mode 3_per_action
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_open_medium --split medium --eval_mode open --subset_mode 0
+python -m ipdb viddiff_method/run_viddiff.py -c viddiff_method/configs/config.yaml --name viddiff_open_hard --split hard --eval_mode open --subset_mode 0
 ```
 
 
